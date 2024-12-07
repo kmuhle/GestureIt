@@ -21,7 +21,7 @@
     class Score{
         constructor(){
             this.score = 0; 
-            this.highScore = localStorage.getItem('highScore') || 0; 
+            this.highScore = localStorage.getItem("simonHighScore") || 0; 
 
             this.scoreElement = document.getElementById("score");
             this.highScoreElement = document.getElementById("highScore");
@@ -34,7 +34,7 @@
             if (this.score > this.highScore) {
                 this.highScore = this.score;
                 this.highScoreElement.textContent = this.highScore;
-                localStorage.setItem('highScore', this.highScore);
+                localStorage.setItem("simonHighScore", this.highScore);
             }
         }
 
@@ -43,7 +43,7 @@
             this.updateScoreDisplay();
         }
 
-        gameOver(){
+        resetScore(){
             this.score = 0;
             this.updateScoreDisplay();
         }
@@ -53,10 +53,7 @@
         constructor() {
             super();
 
-            this.detectedGestureIconElement = document.getElementById("detectedGestureIcon");
-
             this.score = new Score();
-
         }
 
         doit(predictions) {
@@ -74,7 +71,7 @@
                 else {
                     if(detectedGesture !== this.lastGesture){
                         this.incorrectSound.play();
-                        this.score.gameOver();
+                        this.score.resetScore();
                     }
                     this.detectedGestureIconElement.src = `Assets/${detectedGesture}Red.png`;
                     this.lastGesture = detectedGesture; 
@@ -107,9 +104,8 @@
                 <p class="scoreText">High Score: <span id="highScore">0</span></p>
             </div>
             <div id="target">
-                <p class="targetGesture">Simon Says:<br><span id="targetGesture">...</span></p>
+                <p class="commandText">Simon Says:<br><span id="targetGesture">...</span></p>
                 <img id="targetGestureIcon" alt="Target Gesture Icon"/>
-                <!-- <div id="detectedGestureContainer"> <img id="detectedGestureIcon" alt=""/></div> -->
             </div>
         </div>
         <div id="videoContainer">
@@ -118,6 +114,5 @@
             <video autoplay="autoplay" id="videoArea" style="display:none;"></video>
         </div>
     </div>
-    <!-- <div id="updatenote">Loading model...</div> -->
 </body>
 </html>

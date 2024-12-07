@@ -13,6 +13,7 @@ class GestureIt {
         this.targetGestureIconElement = document.getElementById("targetGestureIcon");
         this.feedback = document.getElementById("feedback");
         this.targetGestureElement = document.getElementById("targetGesture");
+        this.detectedGestureIconElement = document.getElementById("detectedGestureIcon");
 
         this.correctSound = new Audio('Assets/correctSound.mp3');
         this.incorrectSound = new Audio('Assets/incorrectSound.mp3');

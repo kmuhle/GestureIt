@@ -11,7 +11,7 @@
 <script>
     class Main {
         constructor() {
-            let gestureIt = new TimedMode();
+            let gestureIt = new MemoryMode();
             gestureIt.newRound();
             let startButton = new StartButton("controls", gestureIt);
             let pauseButton = new PauseButton("controls", gestureIt);
@@ -21,7 +21,7 @@
     class Score{
         constructor(){
             this.score = 0; 
-            this.highScore = localStorage.getItem("timedHighScore") || 0; 
+            this.highScore = localStorage.getItem("memoryHighScore") || 0; 
 
             this.scoreElement = document.getElementById("score");
             this.highScoreElement = document.getElementById("highScore");
@@ -34,7 +34,7 @@
             if (this.score > this.highScore) {
                 this.highScore = this.score;
                 this.highScoreElement.textContent = this.highScore;
-                localStorage.setItem("timedHighScore", this.highScore);
+                localStorage.setItem("memoryHighScore", this.highScore);
             }
         }
 
@@ -47,69 +47,44 @@
             this.score = 0;
             this.updateScoreDisplay();
         }
-
-        getScore(){
-            return this.score;
-        }
     }
 
-    class TimedMode extends GestureIt{
+    class MemoryMode extends GestureIt{
         constructor() {
             super();
 
-            this.timerElement = document.getElementById("timer");
+            this.levelElement = document.getElementById("level");
 
-            this.timer = 60;
-            this.interval = null;
+            this.sequence = [];
+            this.playerSequence = [];
+            this.level = 1;
+            this.gestureIndex = 0;
 
             this.score = new Score();
         }
 
-        startGame() {
-            super.startGame();
-            this.score.resetScore();
-            this.timer = 60;
-            this.updateTimerDisplay();
-
-            this.interval = setInterval(() => {
-                this.timer--;
-                this.updateTimerDisplay();
-                if (this.timer <= 0) {
-                    this.gameOver();
-                }
-            }, 1000);
-        }
-
-        gameOver(){
-            clearInterval(this.interval);
-            alert(`Time's up! Your score: ${this.score.getScore()}`);
-            this.timer = 60;
-        }
-
-        updateTimerDisplay() {
-            let minutes = Math.floor(this.timer / 60); 
-            let seconds = this.timer % 60; 
-            if(seconds < 10){
-                seconds = `0${seconds}`;
-            }
-            this.timerElement.textContent = `${minutes}:${seconds}`;
-        }
-
         doit(predictions) {
             const relevantPredictions = predictions.filter(p => this.gestures.includes(p.label));
+            this.currentGesture = this.sequence[this.gestureIndex];
             if (relevantPredictions.length > 0 && !this.wait) {
                 const detectedGesture = relevantPredictions[0].label; 
+
                 if (detectedGesture === this.currentGesture) {
-                    this.score.getPoint();
                     this.wait = true;
                     this.correctSound.play();
                     this.detectedGestureIconElement.src = `Assets/${detectedGesture}Green.png`;
                     this.lastGesture = detectedGesture;
-                    setTimeout(() => this.newRound(), 300); 
+                    if(this.gestureIndex === this.sequence.length - 1){
+                        this.score.getPoint();
+                        this.gestureIndex = 0;
+                        this.level++;
+                        setTimeout(() => this.newRound(), 300); 
+                    }
                 } 
                 else {
                     if(detectedGesture !== this.lastGesture){
                         this.incorrectSound.play();
+                        this.score.resetScore();
                     }
                     this.detectedGestureIconElement.src = `Assets/${detectedGesture}Red.png`;
                     this.lastGesture = detectedGesture; 
@@ -118,8 +93,26 @@
         }
 
         newRound() {
-            this.currentGesture = this.gestures[Math.floor(Math.random() * this.gestures.length)];
-            this.targetGestureIconElement.src = `Assets/${this.currentGesture}Black.png`;
+            this.playerInput = [];
+            this.levelElement.textContent = this.level;
+
+            for (let i = this.level + 2; i < 100; i++){
+                this.sequence.push(this.gestures[Math.floor(Math.random() * this.gestures.length)])
+            }
+
+            this.playSequence();
+            // this.currentGesture = this.gestures[Math.floor(Math.random() * this.gestures.length)];
+            // this.targetGestureElement.textContent = this.currentGesture.toUpperCase();
+            // this.targetGestureIconElement.src = `Assets/${this.currentGesture}Black.png`;
+        }
+
+        async playSequence(){
+            for (let gesture in this.sequence){
+                this.targetGestureIconElement.src = `Assets/${this.currentGesture}Black.png`;
+                await this.sleep(1000);
+                this.targetGestureIconElement.src = "";
+                await this.sleep(500);
+            }
             this.wait = false;
         }
     }
@@ -141,8 +134,8 @@
                 <p class="scoreText">High Score: <span id="highScore">0</span></p>
             </div>
             <div id="target">
-                <p class="commandText">Time Left: <span id="timer">1:00</span></p>
-                <img id="targetGestureIcon" alt="Target Gesture Icon"/>
+                <p class="scoreText">Level: <span id="level">1</span></p>
+                <img id="targetGestureIcon" alt=""/>
             </div>
         </div>
         <div id="videoContainer">
