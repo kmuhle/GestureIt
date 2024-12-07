@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>GestureIt</title>
+    <link rel="stylesheet" href="GestureStyle.css">
+    <script src="https://cdn.jsdelivr.net/npm/handtrackjs/dist/handtrack.min.js"></script>
+    <script src="GestureIt.js"></script>
+</head>
+
+<script>
+    class Main {
+        constructor() {
+            let gestureIt = new SimonSaysMode();
+            gestureIt.newRound();
+            let startButton = new StartButton("controls", gestureIt);
+            let pauseButton = new PauseButton("controls", gestureIt);
+        }
+    }
+
+    class Score{
+        constructor(){
+            this.score = 0; 
+            this.highScore = localStorage.getItem('highScore') || 0; 
+
+            this.scoreElement = document.getElementById("score");
+            this.highScoreElement = document.getElementById("highScore");
+
+            this.updateScoreDisplay();
+        }
+
+        updateScoreDisplay() {
+            this.scoreElement.textContent = this.score;
+            if (this.score > this.highScore) {
+                this.highScore = this.score;
+                this.highScoreElement.textContent = this.highScore;
+                localStorage.setItem('highScore', this.highScore);
+            }
+        }
+
+        getPoint(){
+            this.score++;
+            this.updateScoreDisplay();
+        }
+
+        gameOver(){
+            this.score = 0;
+            this.updateScoreDisplay();
+        }
+    }
+
+    class SimonSaysMode extends GestureIt{
+        constructor() {
+            super();
+
+            this.detectedGestureIconElement = document.getElementById("detectedGestureIcon");
+
+            this.score = new Score();
+
+        }
+
+        doit(predictions) {
+            const relevantPredictions = predictions.filter(p => this.gestures.includes(p.label));
+            if (relevantPredictions.length > 0 && !this.wait) {
+                const detectedGesture = relevantPredictions[0].label; 
+                if (detectedGesture === this.currentGesture) {
+                    this.score.getPoint();
+                    this.wait = true;
+                    this.correctSound.play();
+                    this.detectedGestureIconElement.src = `Assets/${detectedGesture}Green.png`;
+                    this.lastGesture = detectedGesture;
+                    setTimeout(() => this.newRound(), 300); 
+                } 
+                else {
+                    if(detectedGesture !== this.lastGesture){
+                        this.incorrectSound.play();
+                        this.score.gameOver();
+                    }
+                    this.detectedGestureIconElement.src = `Assets/${detectedGesture}Red.png`;
+                    this.lastGesture = detectedGesture; 
+                }
+            } 
+        }
+
+        newRound() {
+            this.currentGesture = this.gestures[Math.floor(Math.random() * this.gestures.length)];
+            this.targetGestureElement.textContent = this.currentGesture.toUpperCase();
+            this.targetGestureIconElement.src = `Assets/${this.currentGesture}Black.png`;
+            this.wait = false;
+        }
+    }
+
+    window.onload = function () {
+      new Main()
+    }
+
+
+</script>
+
+<body>
+    <h1>GestureIt!</h1>
+    <div id="controls"></div>
+    <div id="gameContainer">
+        <div id="gamePanel">
+            <div id="scoreBoard">
+                <p class="scoreText">Score: <span id="score">0</span></p>
+                <p class="scoreText">High Score: <span id="highScore">0</span></p>
+            </div>
+            <div id="target">
+                <p class="targetGesture">Simon Says:<br><span id="targetGesture">...</span></p>
+                <img id="targetGestureIcon" alt="Target Gesture Icon"/>
+                <!-- <div id="detectedGestureContainer"> <img id="detectedGestureIcon" alt=""/></div> -->
+            </div>
+        </div>
+        <div id="videoContainer">
+            <div id="detectedGestureContainer"> <img id="detectedGestureIcon" alt=""/></div>
+            <canvas id="canvas" width="640" height="480"></canvas>
+            <video autoplay="autoplay" id="videoArea" style="display:none;"></video>
+        </div>
+    </div>
+    <!-- <div id="updatenote">Loading model...</div> -->
+</body>
+</html>

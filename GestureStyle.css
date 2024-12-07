@@ -1,0 +1,195 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(to bottom, #6a11cb, #2575fc);
+    color: #ffffff;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    overflow-y: auto; /* Enable scrolling if content overflows */
+    box-sizing: border-box;
+}
+
+/* Header styling */
+h1 {
+    font-size: 40px;
+    font-weight: bold;
+    margin: 10px 0;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+#controls {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: fit-content;
+    min-width: 50%;
+    gap: 10px;
+    margin-top: 15px;
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+#gameContainer {
+    display: flex; 
+    justify-content: space-between; 
+    flex-wrap: wrap;
+    padding: 20px;
+    width: 80%;
+    margin: 0 auto; 
+    align-items: center;
+}
+
+#gamePanel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 auto; 
+    width: 40%;
+    height: 100%;
+}
+
+#target {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 15px 0;
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    width: 70%;
+    height: 90%;
+}
+
+.targetGesture {
+    font-size: 30px; 
+    font-weight: bold;
+    text-align: center;
+    word-wrap: break-word;
+}
+
+
+#targetGestureIcon {
+    width: 80%;
+}
+
+#scoreBoard {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #4CAF50; /* Green background */
+    border: 2px solid #388E3C;
+    border-radius: 10px;
+    /* color: #fff; */
+    padding: 10px 20px;
+    margin-bottom: 0px;
+    width: 70%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.scoreText {
+    font-size: 15px;
+    font-weight: bold;
+    margin: 0;
+}
+
+#feedback {
+    font-size: 16px;  
+    margin: 10px 0;
+    color: #00ff88;
+    font-weight: bold;
+}
+
+#videoContainer {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 60%; 
+    justify-content: center;
+    height: 100%;
+}
+
+#canvas {
+    position: absolute;
+    z-index: 1;
+    border: 4px solid #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    margin-bottom: 15px;
+    height: 100%;
+}
+
+#detectedGestureContainer {
+    position:absolute;
+    top: 10px;
+    left: 75px;
+    z-index: 2;
+    width: 5vw;  
+    height: 5vw; 
+    align-self: end;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+    
+}
+
+#detectedGestureIcon {
+    width: 90%;
+}
+
+#updatenote {
+    font-size: 16px; 
+    font-style: italic;
+    margin-top: 8px;
+}
+
+input[type="button"] {
+    padding: 10px 20px;
+    font-size: 14px; 
+    font-weight: bold;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    color: #ffffff;
+    background: linear-gradient(135deg, #ff416c, #ff4b2b);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease-in-out;
+}
+
+input[type="button"]:hover {
+    transform: translateY(-3px);
+    background: linear-gradient(135deg, #ff4b2b, #ff416c);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+input[type="button"]:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+
+/* Make the layout responsive */
+@media (max-height: 700px) {
+    body {
+        padding: 20px; /* Add padding for smaller screens */
+    }
+    #canvas {
+        max-height: 100vh; /* Shrink canvas to fit */
+    }
+    h1 {
+        font-size: 32px;  /* Changed from 2rem */
+    }
+    button {
+        font-size: 12px;  /* Changed from 0.8rem */
+        padding: 8px 16px;
+    }
+}

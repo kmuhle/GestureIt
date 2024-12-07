@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GestureIt - Home</title>
+    <style>
+        body {
+            font-family: "Arial", sans-serif;
+            background: linear-gradient(to bottom, #6a11cb, #2575fc);
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 10px 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        p {
+            text-align: center;
+            max-width: 600px;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+
+        #modeContainer {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .mode {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            text-align: center;
+            width: 250px;
+            max-width: 90%;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .mode:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+        }
+
+        .mode img {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 10px;
+        }
+
+        .mode h2 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .mode p {
+            font-size: 1rem;
+        }
+
+        #TimedMode {
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+        }
+
+        #MemoryMode {
+            background: linear-gradient(135deg, #2575fc, #6a11cb);
+        }
+
+        #SimonSaysMode {
+            background: linear-gradient(135deg, #32cd32, #228b22);
+        }
+    </style>
+</head>
+
+<script>
+    class Main {
+        constructor() {
+            let timedMode = new TimedOption("modeContainer");
+            let memoryMode = new MemoryOption("modeContainer");
+            let simonSaysMode = new SimonSaysOption("modeContainer");
+        }
+    }
+
+    class ModeOption {
+        constructor(name, description, icon, modeClass, parentDiv) {
+            this.name = name;
+            this.description = description;
+            this.icon = icon;
+            this.modeClass = modeClass;
+            this.createModeElement(parentDiv);
+        }
+
+        createModeElement(parentDiv) {
+            let modeDiv = document.createElement("div");
+            modeDiv.setAttribute("class", "mode");
+            modeDiv.setAttribute("id", this.modeClass);
+            // modeDiv.classList.add("mode", this.modeClass);
+            modeDiv.innerHTML = `
+                <img src="${this.icon}" alt="${this.name} Icon">
+                <h2>${this.name}</h2>
+                <p>${this.description}</p>`;
+            modeDiv.onclick = () => this.startMode();
+
+            document.getElementById(parentDiv).appendChild(modeDiv);
+        }
+
+        startMode() {
+            window.location.href = `${this.modeClass}.html`;
+        }
+    }
+
+    // Timed Mode
+    class TimedOption extends ModeOption {
+        constructor(parentDiv) {
+            super("Timed",  "Score as many correct gestures as possible within the time limit!", "Assets/timed-icon.png", "TimedMode", parentDiv);
+        }
+    }
+
+    // Memory Mode
+    class MemoryOption extends ModeOption {
+        constructor(parentDiv) {
+            super("Memory", "Memorize and recreate a sequence of gestures. How far can you go?", "Assets/memory-icon.png", "MemoryMode", parentDiv);
+        }
+    }
+
+    // Quick Match Mode
+    class SimonSaysOption extends ModeOption {
+        constructor(parentDiv) {
+            super("Simon Says", "Recreate each gesture correctly before moving to the next one. Accuracy is key!", "Assets/simonsays-icon.png", "SimonSaysMode", parentDiv);
+        }
+    }
+
+    window.onload = function () {
+      new Main()
+    }
+</script>
+<body>
+    <h1>GestureIt!</h1>
+    <p>Test your hand gesture recognition skills with these exciting modes. Choose one to begin!</p>
+    <div id="modeContainer"></div>
+</body>
+</html>

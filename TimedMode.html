@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>GestureIt</title>
+    <link rel="stylesheet" href="GestureStyle.css">
+    <script src="https://cdn.jsdelivr.net/npm/handtrackjs/dist/handtrack.min.js"></script>
+    <script src="GestureIt.js"></script>
+</head>
+
+<script>
+    class Main {
+        constructor() {
+            let gestureIt = new SimonSaysMode();
+            gestureIt.newRound();
+            let startButton = new StartButton("controls", gestureIt);
+            let pauseButton = new PauseButton("controls", gestureIt);
+        }
+    }
+
+    class SimonSaysMode extends GestureIt{
+        constructor() {
+            super();
+            
+        }
+
+        doit(predictions) {
+            const relevantPredictions = predictions.filter(p => this.gestures.includes(p.label));
+            if (relevantPredictions.length > 0 && !this.wait) {
+                const detectedGesture = relevantPredictions[0].label; 
+                if (detectedGesture === this.currentGesture) {
+                    this.wait = true;
+                    this.correctSound.play();
+                    this.detectedGestureIconElement.src = `Assets/${detectedGesture}Green.png`;
+                    this.lastGesture = detectedGesture;
+                    setTimeout(() => this.newRound(), 300); 
+                } 
+                else {
+                    if(detectedGesture !== this.lastGesture){
+                        this.incorrectSound.play();
+                    }
+                    this.detectedGestureIconElement.src = `Assets/${detectedGesture}Red.png`;
+                    this.lastGesture = detectedGesture; 
+                }
+            } 
+        }
+
+        newRound() {
+            this.currentGesture = this.gestures[Math.floor(Math.random() * this.gestures.length)];
+            this.targetGestureElement.innerText = `Simon Says: \n${this.currentGesture.toUpperCase()}`;
+            this.targetGestureIconElement.src = `Assets/${this.currentGesture}Black.png`;
+            this.wait = false;
+        }
+    }
+
+    window.onload = function () {
+      new Main()
+    }
+
+
+</script>
+
+<body>
+    <h1>GestureIt!</h1>
+    <div id="controls"></div>
+    <div id="gameContainer">
+        <div id="gamePanel">
+            <div id="target">
+                <p id="targetGesture">Loading...</p>
+                <img id="targetGestureIcon" alt="Target Gesture Icon"/>
+                <div id="detectedGestureContainer"> <img id="detectedGestureIcon" alt=""/></div>
+            </div>
+        </div>
+        <div id="videoContainer">
+            <canvas id="canvas" width="640" height="480"></canvas>
+            <video autoplay="autoplay" id="videoArea" style="display:none;"></video>
+        </div>
+    </div>
+    <div id="updatenote">Loading model...</div>
+</body>
+</html>
